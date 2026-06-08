@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jupyter-hermes-proxy"
+version = "0.1.0"
+description = "Jupyter server proxy for Hermes Agent dashboard"
+requires-python = ">=3.12"
+dependencies = [
+    "jupyter-server-proxy>=4.0",
+]
+
+[project.entry-points."jupyter_serverproxy_servers"]
+hermes = "jupyter_hermes_proxy:setup_hermes"
+
+[tool.hatch.build.targets.wheel]
+packages = ["jupyter_hermes_proxy"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"jupyter_hermes_proxy/icons" = "jupyter_hermes_proxy/icons"
