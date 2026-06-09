@@ -40,6 +40,34 @@ export HERMES_DASHBOARD_URL=http://127.0.0.1:9119
 
 In this mode the proxy **does not spawn a new process** — it simply proxies traffic to the existing dashboard. No `hermes` binary on PATH is required.
 
+### Building the Hermes dashboard web UI (required)
+
+The Hermes Agent pip package does not ship with the compiled web UI frontend. The dashboard will crash with `ModuleNotFoundError: No module named 'hermes_cli.dashboard_auth'` or show a blank page if `web_dist` is missing.
+
+**You must build the web UI before the dashboard will work:**
+
+```bash
+# Clone the hermes-agent source
+git clone --depth 1 --branch v2026.5.29.2 https://github.com/NousResearch/hermes-agent.git /tmp/hermes-agent
+
+# Build the web UI
+cd /tmp/hermes-agent/web && npm install && npm run build
+
+# Copy the built assets into your Python environment
+cp -r hermes_cli/web_dist $(python -c "import site; print(site.getsitepackages()[0])")/hermes_cli/
+```
+
+**In Dockerfile contexts**, this is typically done inline:
+
+```dockerfile
+RUN git clone --depth 1 --branch v2026.5.29.2 https://github.com/NousResearch/hermes-agent.git /tmp/hermes-agent && \
+    cd /tmp/hermes-agent/web && npm install && npm run build && \
+    cp -r hermes_cli/web_dist /path/to/conda/site-packages/hermes_cli/ && \
+    rm -rf /tmp/hermes-agent
+```
+
+Once built, `hermes dashboard --skip-build` will use the pre-built assets instead of attempting a live build.
+
 ## Related Packages
 
 - **[jupyter-ai-hermes](https://github.com/dive4dec/jupyter-ai-hermes)** — Hermes Agent as an ACP persona for Jupyter AI chat, with live notebook context injection and MCP tools for cell management.
