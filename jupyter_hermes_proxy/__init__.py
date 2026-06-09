@@ -30,7 +30,8 @@ def _hermes_cmd(port: int, unix_socket: str) -> List[str]:
         hermes_bin,
         "dashboard",
         "--port={port}",
-        "--host=127.0.0.1",
+        "--host=0.0.0.0",
+        "--insecure",
         "--no-open",
         "--skip-build",
     ]

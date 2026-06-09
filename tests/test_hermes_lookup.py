@@ -74,7 +74,8 @@ class TestHermesCmd:
         assert cmd[0] == "/usr/bin/hermes"
         assert "dashboard" in cmd
         assert "--port={port}" in cmd
-        assert "--host=127.0.0.1" in cmd
+        assert "--host=0.0.0.0" in cmd
+        assert "--insecure" in cmd
         assert "--no-open" in cmd
         assert "--skip-build" in cmd
 
