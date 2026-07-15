@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jupyter-hermes-proxy"
-version = "0.2.0"
+version = "0.3.0"
 description = "Jupyter server proxy for Hermes Agent dashboard"
 readme = "README.md"
 license = {text = "MIT"}

@@ -30,8 +30,10 @@ def _hermes_cmd(port: int, unix_socket: str) -> List[str]:
         hermes_bin,
         "dashboard",
         "--port={port}",
-        "--host=0.0.0.0",
-        "--insecure",
+        # Bind to loopback only — jupyter-server-proxy handles external access.
+        # Hermes 0.18+ requires auth for non-loopback binds even with --insecure,
+        # which causes a crash loop when no auth provider is configured.
+        "--host=127.0.0.1",
         "--no-open",
         "--skip-build",
     ]
@@ -69,6 +71,14 @@ def setup_hermes() -> Dict[str, Any]:
         "command": _hermes_cmd,
         "timeout": 90,
         "new_browser_tab": True,
+        # Rewrite the Host header to match the loopback bind.
+        # jupyter-server-proxy forwards the browser's Host header (e.g.
+        # socratic.cs.cityu.edu.hk), but Hermes 0.18+ rejects Host headers
+        # that don't match the bind address as DNS-rebinding defence.
+        # Since we bind to 127.0.0.1, set Host to 127.0.0.1:{port}.
+        "request_headers_override": {
+            "Host": "127.0.0.1:{port}",
+        },
         "launcher_entry": {
             "title": "Hermes Dashboard",
             "icon_path": os.path.join(HERE, "icons", "hermes.svg"),
